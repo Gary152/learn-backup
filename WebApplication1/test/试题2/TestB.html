@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #imgs {
+            width: 800px;
+            height: 300px;
+            margin: auto;
+        }
+
+            #imgs img {
+                width: 800px;
+                height: 300px;
+                position: absolute;
+            }
+
+        #cart {
+            width: 800px;
+            margin: 0px auto;
+            text-align: center;
+        }
+
+            #cart input[type=button] {
+                border: none;
+                cursor: pointer;
+                background: none;
+                color: #ff6a00;
+                font-family: 'Microsoft YaHei';
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            table th, td {
+                border: 1px solid #808080;
+                padding: 10px;
+            }
+
+            table img {
+                width: 100px;
+                height: 80px;
+            }
+    </style>
+    <script src="../../Scripts/jquery-3.4.1.min.js"></script>
+    <script>
+        var index = 0;
+        $().ready(function () {
+            //图片轮播
+            window.setInterval(function () {
+                var imgs = $("#imgs img");
+                if (index >= imgs.length) index = 0;
+
+                imgs.eq(index).fadeIn(1000).siblings().fadeOut(1000);
+
+                index++;
+            }, 2000);
+
+            //加入购物车
+            $("#products tbody tr td input").click(function () {
+                var temp = $(this).parent("td").parent("tr").children();
+                var imgHtml = temp.eq(1).html();
+                var name = temp.eq(2).text();
+                var cost = temp.eq(3).text();
+                var flag = true;
+
+                $("#goods tr").each(function () {
+                    var goodsName = $(this).children("td").eq(2).text();
+                    if (name == goodsName) {
+                        flag = false;
+                        var num = Number($(this).children("td").eq(4).text());
+                        $(this).children("td").eq(4).text(num + 1);
+                    }
+                });
+
+                if (flag) {
+                    var tr = $("<tr><td><input type='checkbox'' /></td><td>" + imgHtml + "</td><td>" + name + "</td><td>" +
+                        cost + "</td><td>1</td><td><a href='#'>删除</a></td></tr>");
+                    $("#goods").append(tr);
+                }
+            });
+
+            //单个删除
+            $("#goods").on("click", "tr td a", function () {
+                if (confirm("确认删除吗？")) {
+                    $("this").parent("td").parent("tr").remove();
+                }
+            });
+
+            //批量删除
+            $("tfoot tr td input[type=button]").click(function () {
+                if (confirm("确认删除吗？")) {
+                    $("#goods tr td input[type=checkbox]:checked").each(function () {
+                        $(this).parent("td").parent("tr").remove();
+                    });
+                }
+            });
+
+            //自上而下全选
+            $(".checkAll input[type=checkbox]").click(function () {
+                var flag = $(this).prop("checked");
+                $(".checkAll input[type=checkbox]").each(function () {
+                    $(this).prop("checked", flag);
+                });
+                $("#goods tr td input[type=checkbox]").each(function () {
+                    $(this).prop("checked", flag);
+                });
+            });
+
+            //自下而上全选
+            $("#goods").on("click", "tr td input[type=checkbox]", function myfunction() {
+                var sumNum = $("#goods tr td input[type=checkbox]").length;
+                var checkedNum = $("#goods tr td input[type=checkbox]:checked").length;
+                if (checkedNum == sumNum) {
+                    $(".checkAll input[type=checkbox]").each(function () {
+                        $(this).prop("checked", true);
+                    });
+                } else {
+                    $(".checkAll input[type=checkbox]").each(function () {
+                        $(this).prop("checked", false);
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="imgs">
+        <img src="images/banner1.jpg" />
+        <img src="images/banner2.jpg" />
+        <img src="images/banner3.jpg" />
+    </div>
+    <div id="cart">
+        <h1>数码产品</h1>
+        <table id="products">
+            <thead>
+                <tr>
+                    <th>商品编号</th>
+                    <th>商品</th>
+                    <th>名称</th>
+                    <th>单价</th>
+                    <th>好评</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>201711010000</td>
+                    <td><img src="images/1.jpg" /></td>
+                    <td>Casio/卡西欧 EX-TR350</td>
+                    <td>5999.88</td>
+                    <td>98%</td>
+                    <td><input type="button" value="加入购物车" /></td>
+                </tr>
+                <tr>
+                    <td>201711020000</td>
+                    <td><img src="images/2.jpg" /></td>
+                    <td>Canon/佳能 PowerShot SX50 HS</td>
+                    <td>6999.88</td>
+                    <td>99%</td>
+                    <td><input type="button" value="加入购物车" /></td>
+                </tr>
+                <tr>
+                    <td>201711030000</td>
+                    <td><img src="images/3.jpg" /></td>
+                    <td>Sony/索尼 DSC-WX300</td>
+                    <td>7999.88</td>
+                    <td>97%</td>
+                    <td><input type="button" value="加入购物车" /></td>
+                </tr>
+                <tr>
+                    <td>201711040000</td>
+                    <td><img src="images/4.jpg" /></td>
+                    <td>Fujifilm/富士 instax mini 25</td>
+                    <td>9999.88</td>
+                    <td>96%</td>
+                    <td><input type="button" value="加入购物车" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <h1>购物车</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th class="checkAll"><input type="checkbox" />全选</th>
+                    <th>商品</th>
+                    <th>名称</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="goods">
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="checkAll"><input type="checkbox" />全选</td>
+                    <td colspan="5"><input type="button" value="批量删除" /></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</body>
+</html>

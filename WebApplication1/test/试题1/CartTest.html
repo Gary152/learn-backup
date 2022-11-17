@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #cart {
+            width: 800px;
+            margin: 0px auto;
+            text-align: center;
+        }
+
+            #cart input[type=button] {
+                border: none;
+                cursor: pointer;
+                background: none;
+                color: #ff6a00;
+                font-family: 'Microsoft YaHei';
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            table th, td {
+                border: 1px solid #808080;
+                padding: 10px;
+            }
+
+            table img {
+                width: 90px;
+                height: 70px;
+            }
+    </style>
+    <script src="../../Scripts/jquery-3.4.1.min.js"></script>
+    <script>
+        $(function () {
+            //加入
+            $("#cart tr td a").click(function () {
+                var tr = $(this).parent("td").parent("tr");
+                var image = tr.children().eq(1).html();
+                var name = tr.children().eq(2).text();
+                var cost = Number(tr.children().eq(3).text());
+                var oldnum = Number(tr.children().eq(4).text());
+                tr.children().eq(4).text(oldnum - 1);
+
+                var flag = true;
+                $("#goods tr").each(function () {
+                    var gname = $(this).children().eq(2).text();
+                    if (gname == name) {
+                        flag = false;
+                        var nowNum = Number($(this).children().eq(4).text());
+                        $(this).children().eq(4).text(nowNum + 1);
+                        var nowMoney = Number($(this).children().eq(5).text());
+                        $(this).children().eq(5).text(nowMoney + cost);
+                    }
+                });
+
+                if (flag) {
+                    var tr = $("<tr><td><input type='checkbox' /></td><td>" + image +
+                        "</td ><td>" + name + "</td><td>" + cost + "</td><td>1</td><td>"
+                        + cost + "</td><td><a href='#'>删除</a></td></tr > "
+                    );
+
+                    $("#tbcart #goods").append(tr);
+                }
+
+                GetSum();
+            });
+
+            //自上而下全选
+            $(".checkAll input[type=checkbox]").click(function () {
+                var checkValue = $(this).prop("checked");
+                $("#tbcart #goods tr").each(function () {
+                    $(this).children().eq(0).children().prop("checked", checkValue);
+                });
+            });
+
+            //自下而上全选
+            $("#goods").on("click", "input[type=checkbox]", function () {
+                var allNum = $("#goods input[type=checkbox]").length;
+                var checkNum = $("#goods input[type=checkbox]:checked").length;
+                var flag = allNum == checkNum ? true : false;
+                $(".checkAll input[type=checkbox]").prop("checked", flag);
+            });
+
+            //删除
+            $("#goods").on("click", "a", function () {
+                if (confirm("确认删除吗？")) {
+                    $(this).parent().parent().remove("tr");
+                }
+
+                GetSum();
+            });
+
+            //批量删除
+            $("#tbcart tfoot input[type=button]").click(function () {
+                if (confirm("确认删除吗？")) {
+                    $("#tbcart tbody tr input[type=checkbox]:checked").each(function () {
+                        $(this).parent().parent().remove("tr");
+                    });
+                }
+
+                GetSum();
+            });
+        });
+
+        function GetSum() {
+            //总计
+            var sum = 0;
+            $("#goods tr").each(function () {
+                sum += Number($(this).children("td").eq(5).text());
+            })
+            $("#tbcart tfoot #sum span").text(sum);
+        }
+    </script>
+</head>
+<body>
+    <div id="cart">
+        <h1>图书商品</h1>
+        <table id="products">
+            <thead>
+                <tr>
+                    <th>商品类型</th>
+                    <th>商品</th>
+                    <th>名称</th>
+                    <th>单价(￥)</th>
+                    <th>库存(本)</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>图书</td>
+                    <td><img src="images/book1.jpg" /></td>
+                    <td>零基础学习ASP.NET</td>
+                    <td>60</td>
+                    <td>100</td>
+                    <td><a style="text-decoration:underline;cursor:pointer;color:#ff6a00">加入购物车</a></td>
+                </tr>
+                <tr>
+                    <td>图书</td>
+                    <td><img src="images/book2.jpg" /></td>
+                    <td>VB.NET程序设计</td>
+                    <td>80</td>
+                    <td>100</td>
+                    <td><a style="text-decoration:underline;cursor:pointer;color:#ff6a00">加入购物车</a></td>
+                </tr>
+                <tr>
+                    <td>图书</td>
+                    <td><img src="images/book3.jpg" /></td>
+                    <td>ASP.NET从入门到精通</td>
+                    <td>70</td>
+                    <td>100</td>
+                    <td><a style="text-decoration:underline;cursor:pointer;color:#ff6a00">加入购物车</a></td>
+                </tr>
+                <tr>
+                    <td>图书</td>
+                    <td><img src="images/book4.jpg" /></td>
+                    <td>ASP.NET项目开发</td>
+                    <td>80</td>
+                    <td>100</td>
+                    <td><a style="text-decoration:underline;cursor:pointer;color:#ff6a00">加入购物车</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <h1>购物车</h1>
+
+        <table id="tbcart">
+            <thead>
+                <tr>
+                    <th class="checkAll"><input type="checkbox" />全选</th>
+                    <th>商品</th>
+                    <th>名称</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>小计</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="goods"></tbody>
+            <tfoot>
+                <tr>
+                    <!--<td class="checkAll"><input type="checkbox" />全选</td>-->
+                    <td></td>
+                    <td colspan="5"><input type="button" value="批量删除" /></td>
+                    <td id="sum">总计：<span>0</span>元</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</body>
+</html>

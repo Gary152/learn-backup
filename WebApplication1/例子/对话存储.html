@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <input id="txt1" type="text" /><br />
+    <input id="txt2" type="text" /><br />
+    <input id="b1" type="button" value="确定" />
+</body>
+</html>
+<script type="text/javascript">
+    var users = [{}];
+    var cont = 0;
+    var b1 = document.getElementById("b1");
+    b1.onclick = function () {
+        if (window.sessionStorage) {
+            var txt1 = document.querySelector("#txt1").value;
+            var txt2 = document.querySelector("#txt2").value;
+
+            users[cont] = { "name": txt1, "pwd": txt2 };
+            sessionStorage.setItem("users", JSON.stringify(users));
+
+            cont++;
+        } else {
+            alert("不支持对话存储");
+        }
+    }
+    window.onload = function () {
+        var s1 = [{}];
+        s1 = JSON.parse(sessionStorage.getItem("users"));
+        for (var i = 0; i < s1.length; i++) {
+            document.querySelector("#txt1").value = s1[i].name;
+            document.querySelector("#txt2").value = s1[i].pwd;
+        }
+    }
+</script>

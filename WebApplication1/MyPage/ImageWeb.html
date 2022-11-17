@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-align: center
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        input {
+            width: 50px;
+        }
+    </style>
+    <script>
+        function AddImage() {
+            var MainDiv = document.getElementById("Main");
+            var num1 = Number(document.getElementById("input1").value);
+            var num2 = Number(document.getElementById("input2").value);
+            var num3 = Number(document.getElementById("input3").value);
+            var formatNum = Number(document.getElementById("input4").value);
+
+            for (var i = num1; i <= num2; i += num3) {
+                var li = document.createElement("li");
+                var img = document.createElement("img");
+                img.src = Format(i, formatNum + 1) + ".jpg";
+                li.appendChild(img);
+                MainDiv.appendChild(li);
+            }
+        }
+
+        function Format(n, m) {
+            var reslut = (Array(m).join(0) + n).slice(-m)
+            return reslut;
+            //var _n = 1; //初始数
+            //var _m = 2; //最高位数
+            //var _a = Array(_m); //长度为2的空数组
+            //_a = _a.join(0); //使用0隔开空数组，且把数组转换成字符串，结果是00
+            //_a = _a + _n; // 拼接字符串，结果是 001
+            //_a = _a.slice(-_m); //截取保留最后面2位字符串（slice(-2)表示从后面往前面数2位）
+            //console.log(_a); //结果等于01
+        }
+    </script>
+</head>
+<body>
+    <div>
+        for循环
+        <span>i=</span><input id="input1" type="text" />
+        <span>to</span><input id="input2" type="text" />
+        <span>step</span><input id="input3" type="text" /><br />
+        <span>格式化字符(前缀零的个数)</span><input id="input4" type="text" /><br />
+        <input type="button" value="生成" onclick="AddImage()" /><br />
+    </div><br />
+    <div>
+        <ul id="Main">
+        </ul>
+    </div>
+</body>
+</html>

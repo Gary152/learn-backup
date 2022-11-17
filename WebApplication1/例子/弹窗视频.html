@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>实验页</title>
+    <style type="text/css">
+        /* 弹窗 */
+        .modal {
+            /* 默认隐藏 */
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            animation-name: fadeIn;
+            animation-duration: 1s;
+            transition: all linear 1s;
+        }
+
+        /* 弹窗内容 */
+        .modal-content {
+            position: fixed;
+            top: 10%;
+            left: 0;
+            background-color: #fefefe;
+            width: 100%;
+            animation-name: slideIn;
+            animation-duration: 1s;
+            transition: all linear 1s;
+        }
+
+        /* 关闭按钮 */
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .modal-header {
+            padding: 2px 16px;
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 2px 16px;
+            height: 500px
+        }
+
+        .modal-footer {
+            padding: 2px 16px;
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                bottom: -90%;
+                opacity: 0;
+                top: 100%;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 1;
+                top: 10%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <input id="myBtn" type="button" value="显示" style="font-size:50px" />
+    <!-- 弹窗 -->
+    <div id="myModal" class="modal">
+
+        <!-- 弹窗内容 -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>弹窗头部</h2>
+            </div>
+            <div class="modal-body">
+                <iframe src="https://player.bilibili.com/player.html?aid=7248840&bvid=BV1cs411s7jL&cid=11850648&page=1&as_wide=1&high_quality=1&danmaku=1"
+                        allowfullscreen="allowfullscreen" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <h3>弹窗底部</h3>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    // 获取弹窗
+    var modal = document.getElementById('myModal');
+
+    // 打开弹窗的按钮对象
+    var btn = document.getElementById("myBtn");
+
+    // 获取 <span> 元素，用于关闭弹窗 that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // 点击按钮打开弹窗
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // 点击 <span> (x), 关闭弹窗
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // 在用户点击其他地方时，关闭弹窗
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>

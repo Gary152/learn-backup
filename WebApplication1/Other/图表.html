@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="../Scripts/echarts.min.js"></script>
+
+    <script>
+        //Echarts图表
+        function Echarts() {
+            var mychart = echarts.init(document.getElementById("main"));
+            var option = {
+                title: {
+                    Text: "我的图表"
+                },
+                tooltip: {},
+                legend: [{
+                    data: {
+                        name: "系列1",
+                        icon: "circle",
+                        textStyle: {
+                            color: "red"
+                        }
+                    }
+                }],
+                xAxis: {
+                    data: ["1", "2", "3"]
+                },
+                yAxis: {},
+                series: [{
+                    name: "系列1",
+                    type: "bar",
+                    data: [1, 2, 3]
+                }]
+            };
+
+            mychart.setOption(option);
+        }
+
+        //H5自带画布
+        function Canvas() {
+            var cv = document.getElementById("cv");
+            var cxt = cv.getContext("2d");
+
+            //cxt.fillStyle = "blue";//设置填充颜色
+            ////画长方形
+            /*cxt.fillRect(100, 0, 100, 100);//画实心,x,y,长,宽*/
+
+            //cxt.strokeStryle = "red";//边框颜色
+            //cxt.strokeRect(200, 100, 100, 100);//画边框
+
+            ////画直线
+            //cxt.beginPath();
+            //cxt.moveTo(50, 50);//起点
+            //cxt.lineTo(150, 150);//终点
+            //cxt.stroke();//应用
+
+            ////画弧线
+            //cxt.arc(200, 200, 100, Math.PI * 0.5, Math.PI*3, true);
+            //cxt.stroke();
+        }
+
+        window.onload = function () {
+            Echarts();
+        };
+    </script>
+</head>
+<body>
+    <canvas id="cv"></canvas>
+    <div id="main" style="width:600px;height:600px"></div>
+</body>
+</html>
