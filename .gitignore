@@ -368,9 +368,12 @@ FodyWeavers.xsd
 /ConsoleApp2/bin
 /ConsoleApp2/obj
 
-/WindowsFormsApp1/bin/WindowsFormsApp1/obj
+/WindowsFormsApp1/bin
+/WindowsFormsApp1/obj
 
 /WebApplication1/.vs
 /WebApplication1/bin
 /WebApplication1/obj
 /WebApplication1/packages
+
+/packages
