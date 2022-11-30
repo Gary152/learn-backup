@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        #container dl {
+            text-align: center;
+            margin: 0px 20px 20px 20px;
+            width: 192px;
+        }
+
+        #returnTop {
+            z-index: 999;
+            background-color: #39c5bb;
+            text-align: center;
+            line-height: 50px;
+            width: 100px;
+            height: 50px;
+            position: fixed;
+            top: 200px;
+            right: 20px;
+        }
+    </style>
+    <script>
+        function F1(bvid) {
+            var url = `https://player.bilibili.com/player.html?bvid=${bvid}&page=1&high_quality=1&danmaku=1`;
+            var play = document.getElementById("bv-player");
+            play.setAttribute("src", url);
+            return false;
+        }
+    </script>
+</head>
+
+<body style="text-align: center">
+    <a href="#bv-player">
+        <div id="returnTop">返回顶部</div>
+    </a>
+    <iframe id="bv-player" title=""
+        src="https://player.bilibili.com/player.html?bvid=BV1pr4y1U7b7&page=1&high_quality=1&danmaku=1"
+        allowfullscreen="allowfullscreen" sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"
+        scrolling="no" frameborder="0" height="480" width="640"></iframe>
+    <div id="container">{{content}}</div>
+
+
+</body>
+
+</html>
