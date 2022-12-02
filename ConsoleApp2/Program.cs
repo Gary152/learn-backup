@@ -13,16 +13,19 @@ namespace ConsoleApp2
 {
     internal class Program
     {
+        private static string Key = " SESSDATA=56634153%2C1685525557%2Cc3bca%2Ac1";
+
         public static void Main(string[] args)
         {
             TestGet();
 
+            Console.WriteLine("执行完毕，按任意键结束。");
             Console.ReadKey();
         }
 
-        public static async void TestGet()
+        public static void TestGet()
         {
-            var list = await GetFavorites();
+            var list = GetFavorites().Result;
             Console.WriteLine("请选择：");
 
             for (int i = 0; i < list.Count; i++)
@@ -30,9 +33,10 @@ namespace ConsoleApp2
                 Console.WriteLine(i + 1 + ". " + list[i].title);
             }
 
+            Console.WriteLine("请输入序号");
             var index = int.Parse(Console.ReadLine() ?? "");
 
-            List<dynamic> videos = await GetVideos(list[index - 1].id);
+            List<dynamic> videos = GetVideos(list[index - 1].id).Result;
 
             var txt = "";
             foreach (var item in videos)
@@ -56,10 +60,20 @@ namespace ConsoleApp2
             HttpClient httpClient = new();
             httpClient.Timeout = new TimeSpan(0, 3, 0);
             httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.42");
-            httpClient.DefaultRequestHeaders.Add("cookie", "SESSDATA=59acb0c8%2C1685150710%2Cf3bb2%2Ab1");
+            httpClient.DefaultRequestHeaders.Add("cookie", Key);
 
             var jsonResult = await httpClient.GetStringAsync("https://api.bilibili.com/x/v3/fav/folder/list4navigate");
             var json = JsonDocument.Parse(jsonResult);
+            var succeed = json.RootElement.TryGetProperty("code", out var code);
+            if (!succeed)
+            {
+                throw new Exception("请求出现未知响应");
+            }
+            if (code.ToString() == "-101")
+            {
+                throw new Exception("登录失效");
+            }
+
             var list = json.RootElement.GetProperty("data")[0].GetProperty("mediaListResponse").GetProperty("list");
 
             var items = new List<dynamic>();
@@ -79,7 +93,7 @@ namespace ConsoleApp2
             HttpClient httpClient = new();
             httpClient.Timeout = new TimeSpan(0, 3, 0);
             httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.42");
-            httpClient.DefaultRequestHeaders.Add("cookie", "SESSDATA=59acb0c8%2C1685150710%2Cf3bb2%2Ab1");
+            httpClient.DefaultRequestHeaders.Add("cookie", Key);
 
             var jsonResult = await httpClient.GetStringAsync($"https://api.bilibili.com/x/v3/fav/resource/list?media_id={id}&pn=1&ps=20&keyword=&order=mtime&type=0&tid=0&platform=web&jsonp=jsonp");
             var json = JsonDocument.Parse(jsonResult);
