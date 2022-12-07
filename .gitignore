@@ -362,6 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# 以下为自定义添加项
 /ConsoleApp1/bin
 /ConsoleApp1/obj
 
