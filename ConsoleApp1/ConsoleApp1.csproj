@@ -69,8 +69,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Other\Algorithm.cs" />
-    <Compile Include="Other\DemoLock.cs" />
     <Compile Include="Other\FileEdit.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Data.OleDb;
 
-namespace FileEdit
+namespace Other.FileEdit
 {
     /// <summary>
     /// 对FileEdit各个模块的整合与管理
@@ -47,7 +47,7 @@ namespace FileEdit
         /// </summary>
         /// <param name="cmdtxt">命令行参数;如：shutdown /s</param>
         /// <returns>返回cmd行数据</returns>
-        public static string RunCmd(string cmdtxt)
+        public static string RunCmd(string cmdtxt = "help")
         {
             try
             {
@@ -59,11 +59,16 @@ namespace FileEdit
                 p.StartInfo.RedirectStandardError = true;
                 p.StartInfo.CreateNoWindow = true;
                 p.Start();
+                p.StandardInput.WriteLine("@echo off");
                 p.StandardInput.WriteLine(cmdtxt);
                 p.StandardInput.WriteLine("exit");
                 string result = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
                 p.Close();
+
+                //Regex regex = new Regex($@"^(.|\n|\r)*help\n");
+                //Match match= regex.Match(result);
+                //result.Replace(match.Value, "");
 
                 return result;
             }

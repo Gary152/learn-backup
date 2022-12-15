@@ -7,21 +7,22 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp2
 {
     internal class Program
     {
-        private static string Key = " SESSDATA=56634153%2C1685525557%2Cc3bca%2Ac1";
+        private static readonly string Key = " SESSDATA=56634153%2C1685525557%2Cc3bca%2Ac1";
 
         public static void Main(string[] args)
         {
-            TestGet();
+            //HttpTest();
 
             Console.WriteLine("执行完毕，按任意键结束。");
             Console.ReadKey();
         }
+
+        #region Favorites
 
         public static void TestGet()
         {
@@ -71,6 +72,7 @@ namespace ConsoleApp2
             }
             if (code.ToString() == "-101")
             {
+                Console.WriteLine("登录失效");
                 throw new Exception("登录失效");
             }
 
@@ -112,7 +114,10 @@ namespace ConsoleApp2
             return items;
         }
 
+        #endregion
+
         #region Regex
+
         public void TestRegex()
         {
             string str = "Is is the cost of of gasoline going up up";
@@ -128,45 +133,28 @@ namespace ConsoleApp2
 
         #region Html
 
-        private static void Http_start()
+        private static void HttpTest(string url = "https://www.baidu.com")
         {
-            HttpClient client = new HttpClient();
-            client.Timeout = new TimeSpan(0, 2, 0);//保持2分钟
-            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36");
+            HttpClient httpClient = new();
+            httpClient.Timeout = new TimeSpan(0, 3, 0);
+            httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.42");
+            httpClient.DefaultRequestHeaders.Add("cookie", Key);
 
-            var videosoucode = HttpGetAsync("https://www.cnnpn.cn/article/29829.html", client);
-            HtmlDocument videoDoc = new HtmlDocument();
-            videoDoc.LoadHtml(videosoucode.Result);
-            var contentNode = videoDoc.DocumentNode.SelectSingleNode("//div[@class='content']");
-            var videoNode = contentNode.SelectSingleNode("video");
-            var scriptNode = contentNode.SelectSingleNode("script");
-            Console.WriteLine(scriptNode.OuterHtml);
-            var scriptcode = scriptNode.InnerText;
-            var fileIDBeginIndex = scriptcode.IndexOf("fileID") + 9;
-            var fileIDEndIndex = scriptcode.IndexOf("'", fileIDBeginIndex);
-            var appIDBeginIndex = scriptcode.IndexOf("appID") + 8;
-            var appIDEndIndex = scriptcode.IndexOf("'", appIDBeginIndex);
-            var fileID = scriptcode.Substring(fileIDBeginIndex, fileIDEndIndex - fileIDBeginIndex);
-            var appID = scriptcode.Substring(appIDBeginIndex, appIDEndIndex - appIDBeginIndex);
-            Console.WriteLine(fileID + "----" + appID);
-            var videoJsonUrl = string.Format("https://playvideo.qcloud.com/getplayinfo/v2/{0}/{1}", appID, fileID);
-            var videoinfo = HttpGetAsync(videoJsonUrl, client);
-            var document = JsonDocument.Parse(videoinfo.Result);
-            var videoFaceUrl = document.RootElement.GetProperty("coverInfo").GetProperty("coverUrl").GetString();
-            var videoUrl = document.RootElement.GetProperty("videoInfo").GetProperty("sourceVideo").GetProperty("url").GetString();
-            contentNode.RemoveChild(scriptNode);
-            var newsNewContentStr = contentNode.InnerHtml;
-            newsNewContentStr = newsNewContentStr.Replace("></video>", string.Format(" controls poster=\"{0}\" src=\"{1}\"></video>", videoFaceUrl, videoUrl));
-
-            Console.WriteLine(videoFaceUrl + "----" + videoUrl);
-        }
-        private static async Task<string> HttpGetAsync(string url, HttpClient client)
-        {
-            Thread.Sleep(1000);//防止https认为是攻击
-            var response = await client?.GetAsync(url)!;
-            return await response.Content.ReadAsStringAsync();
+            var videosoucode = httpClient.GetStringAsync(url);
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(videosoucode.Result);
+            var uNode = doc.DocumentNode.SelectSingleNode("//div[@id='u']");//xpath
+            Console.WriteLine(uNode.OuterHtml);//本节点html码
+            Console.WriteLine();
+            Console.WriteLine(uNode.InnerHtml);//子节点html码
+            Console.WriteLine();
+            Console.WriteLine(uNode.InnerText);//纯文本
+            Console.WriteLine();
+            var aNode = uNode.SelectSingleNode("a");
+            Console.WriteLine(aNode.InnerText);
         }
 
         #endregion
+
     }
 }
