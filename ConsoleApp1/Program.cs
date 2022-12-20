@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Pipes;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Other.FileEdit;
@@ -25,8 +29,7 @@ namespace ConsoleApp1
 
         public static void Main(string[] args)
         {
-            var a = CmdOperate.RunCmd();
-            Console.WriteLine(a);
+
         }
 
         #region MyRegion
