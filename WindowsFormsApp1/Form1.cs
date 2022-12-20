@@ -61,6 +61,7 @@ namespace WindowsFormsApp1
             Task.Run(() =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                Thread.CurrentThread.IsBackground = false;
                 var ps = Search(path, "*");
                 if (ps != null && ps.Length > 0)
                 {
@@ -119,41 +120,6 @@ namespace WindowsFormsApp1
             else
             {
                 throw new Exception("在进行搜索时,发现指定的地址不存在");
-            }
-        }
-    }
-
-    public class MyList<T>
-    {
-        private T[] ts = new T[10];
-        private int length = 0;
-
-        public T this[int index]
-        {
-            get { return ts[index]; }
-            set { ts[index] = value; }
-        }
-
-        public int Length { get => length; private set => length = value; }
-
-        public void Add(T t)
-        {
-            ts[Length] = t;
-            Length++;
-
-            if (Length == ts.Length)
-            {
-                T[] temp = new T[Length];
-                for (int i = 0; i < Length; i++)
-                {
-                    temp[i] = ts[i];
-                }
-                ts = new T[Length * 2];
-
-                for (int i = 0; i < Length; i++)
-                {
-                    ts[i] = temp[i];
-                }
             }
         }
     }
