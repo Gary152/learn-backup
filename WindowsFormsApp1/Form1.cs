@@ -73,6 +73,7 @@ namespace WindowsFormsApp1
                 else
                 {
                     MessageBox.Show("搜索结果为空！");
+                    return;
                 }
                 MessageBox.Show("搜索结束！");
             });
@@ -87,39 +88,47 @@ namespace WindowsFormsApp1
         /// <exception cref="Exception"></exception>
         public string[] Search(string path, string filter)
         {
-            if (Directory.Exists(path))
+            try
             {
-                LinkedList<string> list = new LinkedList<string>();
-                var ds = Directory.GetDirectories(path);
-                foreach (var i in ds)
+                if (Directory.Exists(path))
                 {
-                    var temp = Search(i, filter);
-                    foreach (var item in temp)
+                    LinkedList<string> list = new LinkedList<string>();
+                    var ds = Directory.GetDirectories(path);
+                    foreach (var i in ds)
                     {
-                        list.AddLast(item);
-                    }
-                }
-
-                var fs = Directory.GetFiles(path);
-                foreach (var item in fs)
-                {
-                    string extName = Path.GetExtension(item);
-                    var filters = filter.Split('|');
-                    foreach (var f in filters)
-                    {
-                        if (extName == f)
+                        var temp = Search(i, filter);
+                        foreach (var item in temp)
                         {
                             list.AddLast(item);
-                            break;
                         }
                     }
-                }
 
-                return list.ToArray();
+                    var fs = Directory.GetFiles(path);
+                    foreach (var item in fs)
+                    {
+                        string extName = Path.GetExtension(item);
+                        var filters = filter.Split('|');
+                        foreach (var f in filters)
+                        {
+                            if (extName == f || filter == "*")
+                            {
+                                list.AddLast(item);
+                                break;
+                            }
+                        }
+                    }
+
+                    return list.ToArray();
+                }
+                else
+                {
+                    throw new Exception("在进行搜索时,发现指定的地址不存在");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new Exception("在进行搜索时,发现指定的地址不存在");
+                MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
             }
         }
     }

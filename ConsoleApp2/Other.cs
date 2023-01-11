@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,7 +12,6 @@ namespace ConsoleApp2
 {
     public class Other
     {
-        private static readonly string Key = " SESSDATA=56634153%2C1685525557%2Cc3bca%2Ac1";
 
         #region Aes加解密
 
@@ -22,8 +22,8 @@ namespace ConsoleApp2
         /// <returns>该内容对应的哈希值</returns>
         public static string GetHashcode(byte[] bytes)
         {
-            var fileHash = BitConverter.ToString(SHA1.Create().ComputeHash(bytes)).Replace("-", string.Empty).ToLower();
-
+            var rawFileHash = BitConverter.ToString(SHA1.Create().ComputeHash(bytes));
+            var fileHash = rawFileHash.Replace("-", string.Empty).ToLower();
             return fileHash;
         }
 
@@ -32,21 +32,15 @@ namespace ConsoleApp2
         /// </summary>
         /// <param name="strkey">密码</param>
         /// <returns>符合加密条件的key值</returns>
-        private static byte[] GetByteKey(string strkey)
+        public static byte[] GetByteKey(string strkey)
         {
             var arr = Encoding.UTF8.GetBytes(strkey);
             var newArr = new byte[32];
             if (newArr.Length >= arr.Length)
-            {
                 arr.CopyTo(newArr, 0);
-            }
             else
-            {
-                for (int i = 0; i < newArr.Length; i++)
-                {
-                    newArr[i] = arr[i];
-                }
-            }
+                newArr = arr.Take(32).ToArray();
+
             return newArr;
         }
 
@@ -62,6 +56,7 @@ namespace ConsoleApp2
             var keyArray = GetByteKey(key);
 
             var aes = Aes.Create();
+            //aes.Mode = CipherMode.ECB; //不需要IV的模式
             aes.Key = keyArray;
             aes.IV = new byte[16];
 
@@ -83,6 +78,7 @@ namespace ConsoleApp2
             var keyArray = GetByteKey(key);
 
             var aes = Aes.Create();
+            //aes.Mode = CipherMode.ECB; //不需要IV的模式
             aes.Key = keyArray;
             aes.IV = new byte[16];
 
@@ -96,9 +92,11 @@ namespace ConsoleApp2
 
         #region Favorites
 
+        private const string Key = "SESSDATA=84d5129b%2C1688950050%2C9cab9%2A11";
+
         public static void TestGet()
         {
-            var list = GetFavorites().Result;
+            List<dynamic> list = GetFavorites().Result;
             Console.WriteLine("请选择：");
 
             for (int i = 0; i < list.Count; i++)
@@ -114,18 +112,26 @@ namespace ConsoleApp2
             var txt = "";
             foreach (var item in videos)
             {
-                txt += $"<dl><dt><a href=\"https://www.bilibili.com/video/{item.bvid}\">" +
-                    $"<img src=\"{item.cover}\" width=\"192\" height=\"108\" /></a></dt>" +
-                    $"<dd><a href=\"#\" onclick=\"F1('{item.bvid}')\">{item.title}" +
-                    $"</a></dd></dl>";
+                txt += $"<dl><dt><a href=\"https://www.bilibili.com/video/{item.bvid}\">\n" +
+                    $"<img src=\"{item.cover}\" width=\"192\" height=\"108\" /></a></dt>\n" +
+                    $"<dd><a href=\"#\" onclick=\"F1('{item.bvid}')\">{item.title}\n" +
+                    $"</a></dd></dl>\n";
             }
-            StreamReader sr = new StreamReader("test.html");
-            var model = sr.ReadToEnd();
-            sr.Close();
-            model = model.Replace("{{content}}", txt);
-            StreamWriter sw = new StreamWriter(list[index - 1].title + ".html");
-            sw.WriteLine(model);
-            sw.Close();
+            using (StreamReader sr = new StreamReader("test.html"))
+            {
+                var model = sr.ReadToEnd();
+                model = model.Replace("{{content}}", txt);
+
+                string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "html");
+                var filePath = Path.Combine(dirPath, list[index - 1].title + ".html");
+                using (StreamWriter sw = new StreamWriter(filePath, false))  //写入不追加
+                {
+                    sw.WriteLine(model);
+                }
+
+                //打开保存目录
+                _ = Process.Start("explorer.exe", dirPath);
+            }
         }
 
         public static async Task<List<dynamic>> GetFavorites()

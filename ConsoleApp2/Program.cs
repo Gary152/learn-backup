@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace ConsoleApp2
 {
-    internal class Program
+    public class Program
     {
 
         public static void Main(string[] args)
